@@ -4,13 +4,20 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { StateProvider } from './context/ModalContext';
+import { NoteProvider } from './context/DataContext';
+import { SnackbarProvider } from 'notistack'
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <StateProvider >
-      <App />
-    </StateProvider>
+    <NoteProvider>
+      <StateProvider >
+        <SnackbarProvider anchorOrigin={{ horizontal : 'right' , vertical:'top' }} >
+          <App />
+        </SnackbarProvider>
+      </StateProvider>
+    </NoteProvider>
   </React.StrictMode>
 );
 

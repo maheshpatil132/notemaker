@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Header from './components/layouts/Header';
 import Home from './components/Home/Home';
 import Pagination from './components/layouts/Pagination';
 import { supabase } from './Database/ConnectDB';
+import NotesDB from './context/DataContext';
 
 
 
 function App() {
-  const [countries, setCountries] = useState([]);
+  
+  const {setNotes , setLoading} = useContext(NotesDB)
   
 
   useEffect(() => {
@@ -15,10 +17,10 @@ function App() {
 }, []);
 
 async function getCountries() {
-
-    const { data} = await supabase.from('notes').select('*')
-    setCountries(data);
-    console.log(data);
+    setLoading(true)
+    const { data } = await supabase.from('notes').select('*')
+    setLoading(false)
+    setNotes(data);
 }
   
   return (
