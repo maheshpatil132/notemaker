@@ -7,10 +7,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { supabase } from '../../Database/ConnectDB';
 import { useSnackbar } from 'notistack';
 import NotesDB from '../../context/DataContext';
+import PinNoteContext from '../../context/PinNoteContext';
 
 const Note = ({ data }) => {
     const { setShow, setEditNote } = useContext(ModalContext)
     const {setNotes} = useContext(NotesDB)
+    const {setPinNotes} = useContext( PinNoteContext )
     const { enqueueSnackbar} = useSnackbar()
     const EditNote = () => {
         setShow(true);
@@ -32,9 +34,10 @@ const Note = ({ data }) => {
         setNotes((prev)=>{
             let updatearr = prev.filter((elem)=> elem.id !== data.id )
              return updatearr
-         })
+         })  
+         setPinNotes(item)
          localStorage.setItem('PinedNotes' , JSON.stringify(item))
-         return enqueueSnackbar("deleted successfully" , {variant : 'success'})
+         return enqueueSnackbar("Pined successfully" , {variant : 'success'})
        }
         // localStorage.setItem('PinedNotes' , data)
     }
@@ -51,6 +54,7 @@ const Note = ({ data }) => {
                let updatearr = prev.filter((elem)=> elem.id !== data.id )
                 return updatearr
             })
+
             return enqueueSnackbar("deleted successfully" , {variant : 'success'})
         }else{
             return enqueueSnackbar(error , {variant:'error'})
@@ -60,7 +64,7 @@ const Note = ({ data }) => {
         <div className='note bg-white border py-4 shadow-sm px-6 rounded-[1.6rem] '>
             <div className=' border-b-2 pb-3'>
                 <div className='flex mb-2 items-center justify-between'>
-                    <h1 className=' font-semibold text-2xl'>{data.title}</h1>
+                    <h1 className=' font-semibold text-2xl'>{ data.title.length > 15 ? data.title.slice(0,15)+ '...':data.title}</h1>
                     <div className=' flex gap-1 items-center'>
                         <IconButton onClick={DeleteNote}>
                             <DeleteIcon fontSize='medium' />
@@ -74,7 +78,7 @@ const Note = ({ data }) => {
                     </div>
                 </div>
                 <div>
-                    <p className='text-gray-800'>{data.tagline}</p>
+                    <p className='text-gray-800'>{ data.tagline.length > 30 ? data.tagline.slice(0,30) + ' ...' : data.tagline}</p>
                 </div>
             </div>
             <div className=' h-44 overflow-hidden hover:overflow-y-scroll'>

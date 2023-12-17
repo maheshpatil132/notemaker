@@ -1,16 +1,25 @@
-import React from 'react'
+import React, { useContext }  from 'react'
 import { IconButton } from '@mui/material';
 import { PinOff } from 'lucide-react';
+import NotesDB from '../../context/DataContext';
+import { useSnackbar } from 'notistack';
 
 
-const PinedNote = ({data , ind}) => {
+const PinedNote = ({data , ind , setPinNotes}) => {
+    
+    const {setNotes} = useContext(NotesDB)
+    const {enqueueSnackbar} = useSnackbar()
 
     const pinOut = () =>{
       let items = JSON.parse(localStorage.getItem('PinedNotes'))
       let updateItems = items.filter((e ,index)=> index !== ind)
+      setPinNotes(updateItems)
+      setNotes((prev)=> [...prev , data] )
+      enqueueSnackbar('Pinned Out successfully' , { variant: 'success'})
       if(items.length > 0){
         localStorage.setItem('PinedNotes' , JSON.stringify(updateItems))
       }
+
     }
 
 
