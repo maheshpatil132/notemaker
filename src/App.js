@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Header from './components/layouts/Header';
 import Home from './components/Home/Home';
-import Pagination from './components/layouts/Pagination';
 import { supabase } from './Database/ConnectDB';
 import NotesDB from './context/DataContext';
 
@@ -9,7 +8,7 @@ import NotesDB from './context/DataContext';
 
 function App() {
   
-  const {setNotes , setLoading} = useContext(NotesDB)
+  const {setNotes , setLoading } = useContext(NotesDB)
   
 
   useEffect(() => {
@@ -17,10 +16,16 @@ function App() {
 }, []);
 
 async function getCountries() {
+   
+    let items = JSON.parse(localStorage.getItem('PinedNotes'))
     setLoading(true)
-    const { data } = await supabase.from('notes').select('*')
+    const { data } = await supabase.from('notes')
+                                    .select('*')
+                                    .order('inserted_at', { ascending: true })
+                                    
     setLoading(false)
     setNotes(data);
+      
 }
   
   return (
@@ -28,7 +33,6 @@ async function getCountries() {
 
       <Header/>
       <Home/>
-      <Pagination/>
     </div>
   );
 }

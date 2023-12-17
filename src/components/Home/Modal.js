@@ -1,16 +1,19 @@
 import { Dialog } from '@mui/material'
 import { X } from 'lucide-react'
-import React, { useContext, useState} from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import ModalContext from '../../context/ModalContext'
 import { useSnackbar } from 'notistack'
+import { supabase } from '../../Database/ConnectDB'
+import NotesDB from '../../context/DataContext'
 
-const Modal = () => {
-    const {show , setShow} = useContext(ModalContext)
+const Modal = ({NoteData}) => {
+    const {show , setShow} = useContext(ModalContext)   
+    const {setNotes} = useContext(NotesDB)
     const [title, setTitle] = useState('')
-    const [body, setBody] = useState('')
+    const [bodyContent, setBodyContent] = useState('')
     const [tagline, setTagLine] = useState('')
-    const { enqueueSnackbar , closeSnackbar} = useSnackbar()
-
+    const { enqueueSnackbar} = useSnackbar()
+    
 
     const titlehandler = (e)=>{
       setTitle(e.target.value)
@@ -21,17 +24,58 @@ const Modal = () => {
       }
 
       const bodyhandler = (e)=>{
-        setBody(e.target.value)
+        setBodyContent(e.target.value)
       }
 
-    const submitHandle = (e)=>{
+    const submitHandle = async(e)=>{
       e.preventDefault();
 
       if(!title) return enqueueSnackbar('Please write title' , {variant:'error'})
       if(!tagline) return enqueueSnackbar('Please write tagline', {variant:'error'})
-      if(!body) return enqueueSnackbar('Please write body Content', {variant:'error'})
+      if(!bodyContent) return enqueueSnackbar('Please write body Content', {variant:'error'})
+
+    
+    const { data, error } = await supabase.from('notes')
+                                          .update({ title : title ,
+                                                    tagline : tagline ,
+                                                    body : bodyContent })
+                                          .eq('id', NoteData.id)
+                                          .select()
+            
+    //  const {data , error} = await supabase.from('notes').insert([{
+    //     title:title,
+    //     body:bodyContent,
+    //     tagline:tagline
+    //   }]).select()
+     
+     if(data){
+         setTitle('')
+         setTagLine('')
+         setBodyContent('')
+         setNotes((prev)=>{
+            let index = prev.findIndex( (e) => e.id === data[0].id )
+            if(index===-1) return enqueueSnackbar("something went wrong", {variant:'error'})
+            prev[index] = data[0]
+            return prev
+         })
+         setShow(false)
+         enqueueSnackbar('Your Note has been Edited !' , { variant : 'success' })
+     }
+     
+     if(error){
+        enqueueSnackbar(error.message , { variant : 'error' })
+     }
       
     }
+
+
+    useEffect(()=>{
+        if(NoteData){
+            setTitle(NoteData.title || '');
+            setTagLine(NoteData.tagline || '');
+            setBodyContent(NoteData.body || '');
+        }
+    },[NoteData])
     return (
         <div>
             <Dialog open={show}>
@@ -50,7 +94,7 @@ const Modal = () => {
                     </div>
                     <div>
                         <label htmlFor="title" className=' text-sm font-semibold'>Body</label>
-                        <textarea value={body} onChange={(e)=>bodyhandler(e)} rows={5} type="text" id='title' className='mt-1 py-1 px-2 w-full border' />
+                        <textarea value={bodyContent} onChange={(e)=>bodyhandler(e)} rows={5} type="text" id='title' className='mt-1 py-1 px-2 w-full border' />
                     </div>
                     <div className=' flex gap-2'>
                     <div className=' cursor-pointer bg-red-300 h-7 w-7 rounded-full' ></div>
