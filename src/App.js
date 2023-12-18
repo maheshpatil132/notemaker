@@ -20,9 +20,10 @@ function App() {
 
 
   function filterOutCommonObjects(array1, array2, key) {
-    // Filter out objects from the first array that are present in the second array
-    const filteredArray = array1.filter(obj1 => !array2.some(obj2 => obj2[key] === obj1[key]));
-  
+    const filteredArray = array1.filter(obj1 => {if (array2 && Array.isArray(array2)) {
+      return !array2.some(obj2 => obj2[key] === obj1[key]);
+    }
+    return true}); 
     return filteredArray;
   }
 
