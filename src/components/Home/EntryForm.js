@@ -2,6 +2,7 @@ import { useSnackbar } from 'notistack'
 import React, { useContext, useState } from 'react'
 import { supabase } from '../../Database/ConnectDB'
 import NotesDB from '../../context/DataContext'
+import LoaderContext from '../../context/LoaderContext'
 
 const EntryForm = ({setNoteToggle}) => {
 
@@ -9,7 +10,9 @@ const EntryForm = ({setNoteToggle}) => {
     const [bodyContent, setBodyContent] = useState('')
     const [tagline, setTagLine] = useState('')
     const { enqueueSnackbar } = useSnackbar()
+
     const {setNotes,notes} = useContext(NotesDB)
+    const {setLoader} = useContext(LoaderContext)
 
    
     const titlehandler = (e) => {
@@ -31,12 +34,15 @@ const EntryForm = ({setNoteToggle}) => {
         if (!tagline) return enqueueSnackbar('Please write tagline', { variant: 'error' })
         if (!bodyContent) return enqueueSnackbar('Please write body Content', { variant: 'error' })
 
+        setLoader(true)
+
         const { data, error } = await supabase.from('notes').insert([{
             title: title,
             body: bodyContent,
             tagline: tagline
         }]).select()
-
+        
+        setLoader(false)
 
         if(data){
             setTitle('')

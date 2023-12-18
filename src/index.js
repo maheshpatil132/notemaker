@@ -7,6 +7,7 @@ import { StateProvider } from './context/ModalContext';
 import { NoteProvider } from './context/DataContext';
 import { SnackbarProvider } from 'notistack'
 import { PinNoteProvider } from './context/PinNoteContext';
+import { LoaderProvider } from './context/LoaderContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -15,9 +16,11 @@ root.render(
     <NoteProvider>
       <StateProvider >
         <PinNoteProvider>
-          <SnackbarProvider anchorOrigin={{ horizontal: 'right', vertical: 'top' }} >
-            <App />
-          </SnackbarProvider>
+          <LoaderProvider>
+            <SnackbarProvider anchorOrigin={{ horizontal: 'right', vertical: 'top' }} >
+              <App />
+            </SnackbarProvider>
+          </LoaderProvider>
         </PinNoteProvider>
       </StateProvider>
     </NoteProvider>

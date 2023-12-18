@@ -10,6 +10,7 @@ import EntryForm from './EntryForm';
 import PinedNote from './PinedNote';
 import NoDataImg from '../../assets/nodata.svg'
 import PinNoteContext from '../../context/PinNoteContext';
+import Loader from '../Loader/Loader';
 
 const Home = () => {
 

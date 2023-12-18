@@ -5,10 +5,13 @@ import ModalContext from '../../context/ModalContext'
 import { useSnackbar } from 'notistack'
 import { supabase } from '../../Database/ConnectDB'
 import NotesDB from '../../context/DataContext'
+import LoaderContext from '../../context/LoaderContext'
 
 const Modal = ({NoteData}) => {
+
     const {show , setShow} = useContext(ModalContext)   
     const {setNotes} = useContext(NotesDB)
+    const { setLoader  } = useContext(LoaderContext)
     const [title, setTitle] = useState('')
     const [bodyContent, setBodyContent] = useState('')
     const [tagline, setTagLine] = useState('')
@@ -34,7 +37,7 @@ const Modal = ({NoteData}) => {
       if(!tagline) return enqueueSnackbar('Please write tagline', {variant:'error'})
       if(!bodyContent) return enqueueSnackbar('Please write body Content', {variant:'error'})
 
-    
+      setLoader(true)
     const { data, error } = await supabase.from('notes')
                                           .update({ title : title ,
                                                     tagline : tagline ,
@@ -42,11 +45,7 @@ const Modal = ({NoteData}) => {
                                           .eq('id', NoteData.id)
                                           .select()
             
-    //  const {data , error} = await supabase.from('notes').insert([{
-    //     title:title,
-    //     body:bodyContent,
-    //     tagline:tagline
-    //   }]).select()
+    setLoader(false)
      
      if(data){
          setTitle('')
@@ -78,7 +77,7 @@ const Modal = ({NoteData}) => {
     },[NoteData])
     return (
         <div>
-            <Dialog open={show}>
+            <Dialog open={show} sx={{ zIndex:'500' }}>
                 <form onSubmit={(e)=>submitHandle(e)} action="" className=' relative flex flex-col gap-2 w-full lg:w-[400px] py-3 px-6'>
                     <div onClick={()=>setShow(false)} className=' cursor-pointer right-2 top-2 absolute'>
                         <X />

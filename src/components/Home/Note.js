@@ -8,11 +8,14 @@ import { supabase } from '../../Database/ConnectDB';
 import { useSnackbar } from 'notistack';
 import NotesDB from '../../context/DataContext';
 import PinNoteContext from '../../context/PinNoteContext';
+import LoaderContext from '../../context/LoaderContext';
 
 const Note = ({ data }) => {
     const { setShow, setEditNote } = useContext(ModalContext)
-    const {setNotes} = useContext(NotesDB)
+    const {setNotes , notes , pageIndex , ShowNumber , setPageIndex} = useContext(NotesDB)
     const {setPinNotes} = useContext( PinNoteContext )
+    const { setLoader } = useContext(LoaderContext)
+
     const { enqueueSnackbar} = useSnackbar()
     const EditNote = () => {
         setShow(true);
@@ -36,24 +39,32 @@ const Note = ({ data }) => {
              return updatearr
          })  
          setPinNotes(item)
+         
+         if(notes.slice(pageIndex * ShowNumber - ShowNumber, pageIndex * ShowNumber).length <= 0){
+            setPageIndex((prev)=>prev -1)
+         }
+
          localStorage.setItem('PinedNotes' , JSON.stringify(item))
          return enqueueSnackbar("Pined successfully" , {variant : 'success'})
        }
-        // localStorage.setItem('PinedNotes' , data)
+        
     }
 
     const DeleteNote = async() => {
+        setLoader(true)
         const { error } = await supabase
             .from('notes')
             .delete()
             .eq('id', data.id).select('*')
-
+        setLoader(false)
         if(!error){
 
             setNotes((prev)=>{
                let updatearr = prev.filter((elem)=> elem.id !== data.id )
                 return updatearr
             })
+
+            
 
             return enqueueSnackbar("deleted successfully" , {variant : 'success'})
         }else{

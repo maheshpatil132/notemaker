@@ -4,13 +4,15 @@ import Home from './components/Home/Home';
 import { supabase } from './Database/ConnectDB';
 import NotesDB from './context/DataContext';
 import Footer from './components/layouts/Footer';
+import Loader from './components/Loader/Loader';
+import LoaderContext from './context/LoaderContext';
 
 
 
 function App() {
 
   const { setNotes, setLoading , notes} = useContext(NotesDB)
-
+  const {loader} = useContext(LoaderContext)
 
   useEffect(() => {
 
@@ -48,8 +50,7 @@ function App() {
       <Header />
       <Home />
       <Footer/>
-
-      
+      <Loader loading={loader}/>
     </div>
   );
 }

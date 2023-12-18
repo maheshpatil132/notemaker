@@ -21,7 +21,7 @@ const Pagination = () => {
     useEffect(()=>{
         window.scrollTo(0 , 0)
     } , [pageIndex])
-
+    
     return (
         <>
             {!loading &&
