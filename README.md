@@ -25,7 +25,7 @@ Notemaker is a fully functional website that allows users to share their thought
 
 ## 🚀 Getting Started
 
-1. Clone the repository: `git clone https://github.com/your-username/notemaker.git`
+1. Clone the repository: `git clone https://github.com/maheshpatil132/notemaker.git`
 2. Install dependencies: `npm install`
 3. Run the application: `npm start`
 
